@@ -1,18 +1,20 @@
 % binary classification using fitcsvm
 % read extracted features and perform binary classification
 % written by Hong Tang, tanghong@dlut.edu.cn
-% 2019-05-28
+% 2019-08-08
 
 clc;clear;close all
 
-load('features.mat');
+% read features 
+load('features_Tang.mat');    
+% read quality labels 
+load('quality_label_1_to_5.mat');
 
-fsz=size(features);
-feature=features(:,1:21);
-Fqual=features(:,22);          % Binary labels
-clear features;
+fsz=size(feature);
+Fqual=zeros(fsz(1),1);
+Fqual(quality_label>=4)=1;           % Binary labels
 
-Bind=find(Fqual==-1);    % quality bad
+Bind=find(Fqual==0);    % quality bad
 Gind=find(Fqual==1);    %quality good
 
 KD=10;  % 10-fold validation
@@ -24,6 +26,7 @@ for tk=1:length(train_percent)
     
     for rn=1:100    % times to repeat
     
+  % to construct train and test set non-overlapped     
  [G_train_ind,G_test_ind]=crossvalind('LeaveMOut',length(Gind),round(test_percent(tk)*length(Gind)));
  [B_train_ind,B_test_ind]=crossvalind('LeaveMOut',length(Bind),round(test_percent(tk)*length(Bind)));
 
@@ -68,5 +71,5 @@ for tk=1:length(train_percent)
     
 end
 
-save('binary_classification_results.mat','Fscore_mean','Fscore_std');
+% save('binary_classification_results_Tang.mat','Fscore_mean','Fscore_std');
 

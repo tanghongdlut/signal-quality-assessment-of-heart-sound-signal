@@ -26,18 +26,14 @@ function [d,cfs,fz]=getDegree_cycle(rx,Min_cf,Max_cf,fs)
     cfs=z;  
     fz = ((0:length(z)-1)'*(f_end-f_start)/length(z))+f_start;  % vector of cycle frequency
 
-    f_d=(f_end-f_start)/M;           % sampling interval in cycle frequency domain
+%     f_d=(f_end-f_start)/M;           % sampling interval in cycle frequency domain
 
-    L=max(sz)/fs;   % length, second
-
-    % the first indicator for degree of periodicity
-% degree=max(cfs)/(sum(cfs)*f_d*sqrt(L));
-degree=max(cfs)/(sum(cfs)*f_d);
+%     L=max(sz)/fs;   % length, second
 
 % the second indicator for degree of periodicity
 % the high the peak is, the more periodic the signal is.
 degree_peak=max(cfs)/median(cfs);
 
-d=[degree degree_peak];
+d= degree_peak;
 
 

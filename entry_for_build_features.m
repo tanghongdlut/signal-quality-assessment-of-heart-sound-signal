@@ -14,16 +14,13 @@ load('hs_data_original.mat')
 sz=size(hs_data_original);
 
 % Have the features previously been done partly ?
-if isempty(dir('features.mat'))   % No, from the beginning
+if isempty(dir('features_Tang.mat'))   % No, from the beginning
     start_i=1;
 else                % Yes, to continue
-    load('features.mat');
+    load('features_Tang.mat');
     sz=size(features);
     start_i=sz(1);
 end
-
-Binary_label=[];
-Triple_label=[];
 
 for k=start_i:sz(1)
     
@@ -38,25 +35,11 @@ for k=start_i:sz(1)
     enve=getEnvelopeFromSTFT(phs,fs);
     
     % get features 
-    features(k,:)=get_features(phs,enve,fs);
-    
-    if hs_data_original(k,1).quality_label <=3
-        Binary_label(k,1)=0;    % unacceptable quality
-    else
-        Binary_label(k,1)=1;     % acceptable quality
-    end
-    
-    if hs_data_original(k,1).quality_label <=3
-        Triple_label(k,1)=0;    % unacceptable quality
-    elseif hs_data_original(k,1).quality_label ==4
-        Triple_label(k,1)=1;    % good quality
-    else
-        Triple_label(k,1)=2;    % excellent quality
-    end
+    features(k,:)=get_features_Tang(phs,enve,fs);
     
     % save features regularly to avoid computer accidental shutdown
     if rem(k,100)==0
-        save('features.mat','features','Binary_label','Triple_label');
+        save('features_Tang.mat','features');
         'saved'
     end
     
@@ -66,9 +49,9 @@ for k=start_i:sz(1)
 end
 
 
-save('features.mat','features','Binary_label','Triple_label');
+save('features_Tang.mat','features');
 
 % 
-% shutdown computer 
+% shutdown computer when the feature extraction is completed
 % system('shutdown -s -t 300');
 

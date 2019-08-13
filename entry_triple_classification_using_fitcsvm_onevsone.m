@@ -1,15 +1,21 @@
 % triple classification using fitcsvm based on onevs one
 % written by Hong Tang, tanghong@dlut.edu.cn
-% 2019-05-28
+% 2019-08-08
 
 clc;clear;close all
 
-load('features.mat');
+% read features 
+load('features_Tang.mat');
 
-fsz=size(features);
-feature=features(:,1:21);
-Fqual=features(:,23);    % labels for triple classificaiton
-clear features;
+% read quality labels 
+load('quality_label_1_to_5.mat');
+
+fsz=size(feature);  
+% three classification for quality
+% 0 for "unacceptable", 1 for "good", and 2 for "excellent"
+Fqual=zeros(fsz(1),1);   
+Fqual(quality_label>=4)=1;
+Fqual(quality_label>=5)=2;
 
 Bind=find(Fqual==0);     % quality unacceptabble
 Gind=find(Fqual==1);    %  quality good
@@ -22,8 +28,9 @@ test_percent=1-train_percent;
 
 for tk=1:length(train_percent)
     
-    for rn=1:10  % times to repeat
+    for rn=1:100  % times to repeat
     
+        % to construct training and test set non-overlapped
  [G_train_ind,G_test_ind]=crossvalind('LeaveMOut',length(Gind),round(test_percent(tk)*length(Gind)));
  [B_train_ind,B_test_ind]=crossvalind('LeaveMOut',length(Bind),round(test_percent(tk)*length(Bind)));
  [E_train_ind,E_test_ind]=crossvalind('LeaveMOut',length(Eind),round(test_percent(tk)*length(Eind)));
@@ -93,7 +100,7 @@ for tk=1:length(train_percent)
     clear md_GB md_GB md_BE;
     
     end
-    
+    % to calculate average and standard deviation
     Fscore_mean(tk,:)=mean(score_set);
     Fscore_std(tk,:)=std(score_set);
     
@@ -102,7 +109,4 @@ for tk=1:length(train_percent)
     
 end
 
-save('triple_classification_results.mat','Fscore_mean','Fscore_std');
-
-
-
+% save('triple_classification_results_Tang.mat','Fscore_mean','Fscore_std');
